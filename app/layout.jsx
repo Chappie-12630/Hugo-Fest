@@ -1,6 +1,6 @@
 // app/layout.jsx
 export const metadata = {
-  title: "Fiesta José Carlos Hernández García",
+  title: "Hugo Fest",
   description: "Celebración de cumpleaños · 25 de Julio 2026",
 };
 
