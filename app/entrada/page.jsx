@@ -1,5 +1,6 @@
-// app/page.jsx
-import { redirect } from "next/navigation";
-export default function Home() {
-  redirect("/admin");
+// app/entrada/page.jsx
+"use client";
+import EscanerEntrada from "../../components/EscanerEntrada";
+export default function EntradaPage() {
+  return <EscanerEntrada />;
 }
