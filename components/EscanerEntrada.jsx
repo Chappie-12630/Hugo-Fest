@@ -56,7 +56,7 @@ function PINScreen({ onUnlock }) {
       </div>
       <div style={{ fontSize: "0.65rem", color: "#3D4F63", letterSpacing: "0.2em",
         textTransform: "uppercase", marginBottom: 48 }}>
-        José Carlos · 25 Julio 2026
+        Hugo Monroy · 25 Julio 2026
       </div>
 
       {/* Puntos */}
