@@ -198,13 +198,13 @@ export default function SendInviteModal({ guests, onClose }) {
                   fontFamily: "monospace", whiteSpace: "pre-wrap" }}>
 {`🎂 *¡Hola, ${isBulk ? "[Nombre]" : guests[0]?.name}!*
 
-Estás invitado a celebrar el cumpleaños de *José Carlos Hernández García*.
+Estás invitado a celebrar el cumpleaños de *Hugo Monroy*.
 
 📅 *Fecha:* 25 de Julio, 2026
 🪑 *Mesa:* ${isBulk ? "[Mesa]" : guests[0]?.table}
 
 Tu invitación con QR:
-👉 fiesta-jose-carlos.vercel.app/invitado/[ID]`}
+👉 hugo-fest.vercel.app/invitado/[ID]`}
                 </div>
               </div>
             )}
