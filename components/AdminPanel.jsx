@@ -40,7 +40,7 @@ function statusLabel(r) { return r === "confirmed" ? "Confirmado" : r === "decli
 
 function QRModal({ guest, onClose }) {
   if (!guest) return null;
-  const base = typeof window !== "undefined" ? window.location.origin : "https://fiesta-jose-carlos.vercel.app";
+  const base = typeof window !== "undefined" ? window.location.origin : "https://hugo-fest.vercel.app";
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "#000000CC", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div onClick={e => e.stopPropagation()} style={{ ...cardStyle, maxWidth: 320, textAlign: "center", padding: 32, borderColor: "#3D2E10" }}>
@@ -150,7 +150,7 @@ export default function AdminPanel() {
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
               <div style={{ width: 36, height: 36, borderRadius: 10, background: C.gold, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🎂</div>
               <div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: C.text, fontFamily: "Georgia,serif" }}>José Carlos Hernández</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: C.text, fontFamily: "Georgia,serif" }}>Hugo Monroy</div>
                 <div style={{ fontSize: 11, color: C.gold, letterSpacing: "0.1em", textTransform: "uppercase" }}>Panel de Administración</div>
               </div>
             </div>
