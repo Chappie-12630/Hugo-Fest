@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 
 const BASE_URL = process.env.NEXT_PUBLIC_VERCEL_URL
   ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-  : "https://fiesta-jose-carlos.vercel.app";
+  : "https://hugo-fest.vercel.app";
 
 // ── Genera el HTML del email ──────────────────────────────────────────────────
 function buildEmailHTML({ name, table, guestId }) {
@@ -18,7 +18,7 @@ function buildEmailHTML({ name, table, guestId }) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Invitación — José Carlos Hernández García</title>
+  <title>Invitación — Hugo Monroy </title>
 </head>
 <body style="margin:0;padding:0;background:#07090E;font-family:'Georgia',serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#07090E;padding:40px 20px;">
@@ -38,10 +38,10 @@ function buildEmailHTML({ name, table, guestId }) {
 
           <!-- Nombre del festejado -->
           <h1 style="margin:0 0 4px;font-size:38px;font-weight:300;color:#C9A84C;line-height:1.1;font-family:'Georgia',serif;">
-            José Carlos
+            Hugo
           </h1>
           <h2 style="margin:0 0 32px;font-size:22px;font-weight:300;color:#4A5A70;letter-spacing:0.04em;font-family:'Georgia',serif;">
-            Hernández García
+            Monroy
           </h2>
 
           <!-- Separador -->
@@ -115,7 +115,7 @@ function buildEmailHTML({ name, table, guestId }) {
         <!-- Footer -->
         <tr><td style="background:#080C12;border:1px solid #1E2A3A;border-top:none;padding:24px 48px;text-align:center;">
           <p style="margin:0 0 4px;font-size:18px;color:#C9A84C;font-family:'Georgia',serif;font-weight:300;">
-            José Carlos
+            Hugo
           </p>
           <p style="margin:0;font-size:10px;color:#2A3A50;letter-spacing:0.18em;text-transform:uppercase;font-family:'Arial',sans-serif;">
             25 · Julio · 2026
@@ -146,7 +146,7 @@ function buildWhatsAppMessage({ name, table, guestId }) {
   const inviteUrl = `${BASE_URL}/invitado/${guestId}`;
   return `🎂 *¡Hola, ${name}!*
 
-Estás invitado a celebrar el cumpleaños de *José Carlos Hernández García*.
+Estás invitado a celebrar el cumpleaños de *Hugo Monroy*.
 
 📅 *Fecha:* 25 de Julio, 2026
 🪑 *Mesa:* ${table}
@@ -171,7 +171,7 @@ async function sendEmail({ name, email, table, guestId }) {
     body: JSON.stringify({
       from: process.env.RESEND_FROM_EMAIL || "invitaciones@resend.dev",
       to: [email],
-      subject: `🎂 Tu invitación — Fiesta de José Carlos`,
+      subject: `🎂 Tu invitación — Fiesta de Hugo Monroy`,
       html: buildEmailHTML({ name, table, guestId }),
     }),
   });
