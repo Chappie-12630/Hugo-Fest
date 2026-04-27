@@ -4,7 +4,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { subscribeGuests, markArrived }              from "../lib/guests";
 
-const SCANNER_PIN = process.env.NEXT_PUBLIC_SCANNER_PIN || "2607";
+// 🔐 Cambia este PIN en Vercel → Settings → Environment Variables → NEXT_PUBLIC_SCANNER_PIN
+const SCANNER_PIN = process.env.NEXT_PUBLIC_SCANNER_PIN || "5296";
 
 // ── Utils ─────────────────────────────────────────────────────────────────────
 function nowTime() {
@@ -50,16 +51,19 @@ function PINScreen({ onUnlock }) {
           40%,80% { transform: translateX(8px); }
         }
       `}</style>
+
+      {/* Logo */}
+      <div style={{ marginBottom: 8, fontSize: "2.2rem", textAlign: "center" }}>🎰</div>
       <div style={{ fontFamily: "'Cormorant Garamond', serif",
-        fontSize: "1.9rem", color: "#C9A84C", marginBottom: 6, textAlign: "center" }}>
-        Escáner de Entrada
+        fontSize: "1.9rem", color: "#C9A84C", marginBottom: 4, textAlign: "center" }}>
+        Hugo Fest
       </div>
       <div style={{ fontSize: "0.65rem", color: "#3D4F63", letterSpacing: "0.2em",
         textTransform: "uppercase", marginBottom: 48 }}>
-        Hugo Monroy · 25 Julio 2026
+        Escáner de Entrada · 20 Julio 2026
       </div>
 
-      {/* Puntos */}
+      {/* Puntos PIN */}
       <div style={{
         display: "flex", gap: 16, marginBottom: 40,
         animation: shake ? "shake 0.5s ease" : "none",
@@ -74,7 +78,7 @@ function PINScreen({ onUnlock }) {
         ))}
       </div>
 
-      {/* Teclado */}
+      {/* Teclado numérico */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 72px)", gap: 12,
         fontFamily: "'DM Sans', sans-serif" }}>
         {[1,2,3,4,5,6,7,8,9,null,0,"⌫"].map((k, i) => (
@@ -100,7 +104,7 @@ function PINScreen({ onUnlock }) {
   );
 }
 
-// ── Toast resultado ───────────────────────────────────────────────────────────
+// ── Toast de resultado ────────────────────────────────────────────────────────
 function ResultToast({ result, onDismiss }) {
   useEffect(() => {
     if (!result) return;
@@ -161,7 +165,6 @@ function ResultToast({ result, onDismiss }) {
           cursor: "pointer", fontSize: "1rem", opacity: 0.5, flexShrink: 0,
         }}>✕</button>
       </div>
-      {/* barra de progreso */}
       <div style={{ marginTop: 14, height: 2, background: c.border + "30", borderRadius: 2 }}>
         <div style={{
           height: "100%", background: c.border, borderRadius: 2,
@@ -181,6 +184,7 @@ function QRCamera({ onScan }) {
   const [error,  setError]  = useState(null);
   const [jsQR,   setJsQR]   = useState(null);
 
+  // Cargar librería jsQR dinámicamente
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js";
@@ -190,6 +194,7 @@ function QRCamera({ onScan }) {
     return () => { try { document.head.removeChild(script); } catch {} };
   }, []);
 
+  // Iniciar cámara
   useEffect(() => {
     if (!jsQR) return;
     let stream;
@@ -213,6 +218,7 @@ function QRCamera({ onScan }) {
     };
   }, [jsQR]);
 
+  // Loop de escaneo
   useEffect(() => {
     if (!ready || !jsQR) return;
     function tick() {
@@ -262,7 +268,7 @@ function QRCamera({ onScan }) {
         </div>
       )}
 
-      {/* Marco dorado */}
+      {/* Marco dorado de escaneo */}
       {ready && (
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none",
           display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -282,11 +288,11 @@ function QRCamera({ onScan }) {
   );
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
+// ── Componente Principal ──────────────────────────────────────────────────────
 export default function EscanerEntrada() {
   const [unlocked,  setUnlocked]  = useState(false);
-  const [guests,    setGuests]    = useState({});   // id → guest data
-  const [arrivals,  setArrivals]  = useState([]);   // log local
+  const [guests,    setGuests]    = useState({});
+  const [arrivals,  setArrivals]  = useState([]);
   const [result,    setResult]    = useState(null);
   const [mode,      setMode]      = useState("camera");
   const [manualId,  setManualId]  = useState("");
@@ -321,7 +327,6 @@ export default function EscanerEntrada() {
       return;
     }
 
-    // Registrar en Firebase
     markArrived(id).catch(console.error);
     setArrivals(prev => [{ id, name: guest.name, table: guest.table, time }, ...prev]);
     setResult({ type: "success", name: guest.name, table: guest.table, time });
@@ -335,10 +340,10 @@ export default function EscanerEntrada() {
 
   if (!unlocked) return <PINScreen onUnlock={() => setUnlocked(true)} />;
 
-  const guestList     = Object.values(guests);
-  const totalGuests   = guestList.length;
-  const arrivedCount  = guestList.filter(g => g.arrived).length;
-  const pct           = totalGuests ? Math.round((arrivedCount / totalGuests) * 100) : 0;
+  const guestList    = Object.values(guests);
+  const totalGuests  = guestList.length;
+  const arrivedCount = guestList.filter(g => g.arrived).length;
+  const pct          = totalGuests ? Math.round((arrivedCount / totalGuests) * 100) : 0;
 
   return (
     <>
@@ -372,11 +377,11 @@ export default function EscanerEntrada() {
           <div>
             <div style={{ fontFamily: "'Cormorant Garamond', serif",
               fontSize: "1.25rem", color: "#C9A84C", fontWeight: 600 }}>
-              Escáner de Entrada
+              🎰 Hugo Fest — Escáner
             </div>
             <div style={{ fontSize: "0.62rem", color: "#3D4F63",
               letterSpacing: "0.14em", textTransform: "uppercase", marginTop: 2 }}>
-              José Carlos · 25 Julio 2026
+              Hugo Monroy · 20 Julio 2026
             </div>
           </div>
           <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
@@ -464,10 +469,9 @@ export default function EscanerEntrada() {
                   </button>
                 </div>
 
-                {/* Lista clicable */}
                 <div style={{ fontSize: "0.62rem", color: "#2A3A50",
                   letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 10 }}>
-                  Lista de invitados — clic para seleccionar
+                  Lista — clic para seleccionar
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 6,
                   maxHeight: 420, overflowY: "auto" }}>
