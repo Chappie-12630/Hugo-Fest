@@ -1,6 +1,5 @@
 "use client";
-// components/SendInviteModal.jsx
-// Modal para elegir canal y enviar invitación(es)
+// components/SendInviteModal.jsx — Modal de envío de invitaciones · Hugo Fest
 
 import { useState } from "react";
 
@@ -13,7 +12,6 @@ const C = {
   amber: "#E0A855",
 };
 
-// ── Canal toggle button ───────────────────────────────────────────────────────
 function ChannelToggle({ id, emoji, label, desc, selected, onToggle }) {
   return (
     <div onClick={() => onToggle(id)} style={{
@@ -48,12 +46,10 @@ function ChannelToggle({ id, emoji, label, desc, selected, onToggle }) {
   );
 }
 
-// ── Result row ────────────────────────────────────────────────────────────────
 function ResultRow({ result, channels }) {
-  const emailOk  = !channels.includes("email")    || result.email?.success;
-  const waOk     = !channels.includes("whatsapp") || result.whatsapp?.success;
-  const allOk    = emailOk && waOk;
-
+  const emailOk = !channels.includes("email")    || result.email?.success;
+  const waOk    = !channels.includes("whatsapp") || result.whatsapp?.success;
+  const allOk   = emailOk && waOk;
   return (
     <div style={{
       display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -90,41 +86,28 @@ function ResultRow({ result, channels }) {
   );
 }
 
-// ── Main Modal ────────────────────────────────────────────────────────────────
-// Props:
-//   guests   → array de invitados a enviar (1 o todos)
-//   onClose  → función para cerrar
 export default function SendInviteModal({ guests, onClose }) {
-  const [channels,  setChannels]  = useState(["email"]);
-  const [status,    setStatus]    = useState("idle"); // idle | sending | done | error
-  const [results,   setResults]   = useState([]);
-  const [progress,  setProgress]  = useState(0);
-  const [summary,   setSummary]   = useState(null);
-
+  const [channels, setChannels] = useState(["email"]);
+  const [status,   setStatus]   = useState("idle");
+  const [results,  setResults]  = useState([]);
+  const [summary,  setSummary]  = useState(null);
   const isBulk = guests.length > 1;
 
   function toggleChannel(ch) {
-    setChannels(prev =>
-      prev.includes(ch) ? prev.filter(c => c !== ch) : [...prev, ch]
-    );
+    setChannels(prev => prev.includes(ch) ? prev.filter(c => c !== ch) : [...prev, ch]);
   }
 
   async function handleSend() {
     if (!channels.length) return;
     setStatus("sending");
-    setProgress(0);
-
     try {
-      const res = await fetch("/api/send-invite", {
+      const res  = await fetch("/api/send-invite", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ guests, channels }),
       });
-
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.error || "Error desconocido");
-
       setResults(data.results || []);
       setSummary({ sent: data.sent, total: data.total });
       setStatus("done");
@@ -144,12 +127,11 @@ export default function SendInviteModal({ guests, onClose }) {
         background: C.surface, border: `1px solid #3D2E10`,
         borderRadius: 16, padding: 32,
       }}>
-
         {/* Header */}
         <div style={{ marginBottom: 24 }}>
           <div style={{ fontSize: 11, color: C.gold, letterSpacing: "0.18em",
             textTransform: "uppercase", marginBottom: 6, fontWeight: 700 }}>
-            Enviar invitación{isBulk ? "es" : ""}
+            🎰 Hugo Fest · Enviar invitación{isBulk ? "es" : ""}
           </div>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.text,
             fontFamily: "Georgia, serif", marginBottom: 4 }}>
@@ -162,49 +144,43 @@ export default function SendInviteModal({ guests, onClose }) {
           )}
         </div>
 
-        {/* Estado: selección de canal */}
+        {/* Idle: selección de canal */}
         {status === "idle" && (
           <>
             <div style={{ fontSize: 11, color: C.textMuted, letterSpacing: "0.1em",
               textTransform: "uppercase", marginBottom: 12, fontWeight: 600 }}>
-              Elige el canal de envío
+              Canal de envío
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
-              <ChannelToggle
-                id="email" emoji="📧" label="Email"
-                desc={isBulk ? "Envía a todos los que tienen email registrado" : (guests[0]?.email || "Sin email registrado")}
-                selected={channels.includes("email")}
-                onToggle={toggleChannel}
-              />
-              <ChannelToggle
-                id="whatsapp" emoji="💬" label="WhatsApp"
-                desc={isBulk ? "Envía a todos los que tienen teléfono registrado" : (guests[0]?.phone || "Sin teléfono registrado")}
-                selected={channels.includes("whatsapp")}
-                onToggle={toggleChannel}
-              />
+              <ChannelToggle id="email" emoji="📧" label="Email"
+                desc={isBulk ? "A todos los que tienen email registrado" : (guests[0]?.email || "Sin email registrado")}
+                selected={channels.includes("email")} onToggle={toggleChannel} />
+              <ChannelToggle id="whatsapp" emoji="💬" label="WhatsApp"
+                desc={isBulk ? "A todos los que tienen teléfono registrado" : (guests[0]?.phone || "Sin teléfono registrado")}
+                selected={channels.includes("whatsapp")} onToggle={toggleChannel} />
             </div>
 
-            {/* Previsualización del mensaje */}
             {channels.includes("whatsapp") && (
-              <div style={{
-                padding: "14px 16px", borderRadius: 8, marginBottom: 24,
-                background: C.surfaceAlt, border: `1px solid ${C.border}`,
-              }}>
+              <div style={{ padding: "14px 16px", borderRadius: 8, marginBottom: 24,
+                background: C.surfaceAlt, border: `1px solid ${C.border}` }}>
                 <div style={{ fontSize: 10, color: C.textMuted, letterSpacing: "0.12em",
                   textTransform: "uppercase", marginBottom: 8, fontWeight: 600 }}>
                   Vista previa WhatsApp
                 </div>
                 <div style={{ fontSize: 12, color: C.textMuted, lineHeight: 1.7,
                   fontFamily: "monospace", whiteSpace: "pre-wrap" }}>
-{`🎂 *¡Hola, ${isBulk ? "[Nombre]" : guests[0]?.name}!*
+{`🎰 *¡Hola, ${isBulk ? "[Nombre]" : guests[0]?.name}!*
 
 Estás invitado a celebrar el cumpleaños de *Hugo Monroy*.
 
-📅 *Fecha:* 25 de Julio, 2026
+📅 *Fecha:* 20 de Julio, 2026
+🕔 *Hora:* 5:00 PM
 🪑 *Mesa:* ${isBulk ? "[Mesa]" : guests[0]?.table}
 
 Tu invitación con QR:
-👉 hugo-fest.vercel.app/invitado/[ID]`}
+👉 [Link personal]
+
+_Noche de Casino · Las Vegas Night 🃏_`}
                 </div>
               </div>
             )}
@@ -228,33 +204,26 @@ Tu invitación con QR:
           </>
         )}
 
-        {/* Estado: enviando */}
+        {/* Enviando */}
         {status === "sending" && (
           <div style={{ textAlign: "center", padding: "32px 0" }}>
             <div style={{ fontSize: "2.5rem", marginBottom: 20,
               animation: "spin 1.5s linear infinite", display: "inline-block" }}>⟳</div>
             <div style={{ fontSize: 16, fontWeight: 600, color: C.text, marginBottom: 8,
-              fontFamily: "Georgia, serif" }}>
-              Enviando invitaciones...
-            </div>
-            <div style={{ fontSize: 12, color: C.textMuted }}>
-              Esto puede tomar unos segundos
-            </div>
+              fontFamily: "Georgia, serif" }}>Enviando invitaciones...</div>
+            <div style={{ fontSize: 12, color: C.textMuted }}>Esto puede tomar unos segundos</div>
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
           </div>
         )}
 
-        {/* Estado: completado */}
+        {/* Completado */}
         {status === "done" && summary && (
           <>
-            <div style={{
-              textAlign: "center", padding: "20px 0 24px",
-            }}>
+            <div style={{ textAlign: "center", padding: "20px 0 24px" }}>
               <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>
                 {summary.sent === summary.total ? "🎉" : "⚠️"}
               </div>
-              <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 6,
-                fontFamily: "Georgia, serif",
+              <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 6, fontFamily: "Georgia, serif",
                 color: summary.sent === summary.total ? C.green : C.amber }}>
                 {summary.sent === summary.total
                   ? "¡Todas enviadas!"
@@ -264,23 +233,17 @@ Tu invitación con QR:
                 {summary.sent} enviadas · {summary.total - summary.sent} con error
               </div>
             </div>
-
-            {/* Resultados detallados */}
             <div style={{ maxHeight: 280, overflowY: "auto", marginBottom: 20 }}>
-              {results.map((r, i) => (
-                <ResultRow key={i} result={r} channels={channels} />
-              ))}
+              {results.map((r, i) => <ResultRow key={i} result={r} channels={channels} />)}
             </div>
-
             <button onClick={onClose} style={{
               width: "100%", padding: "12px", borderRadius: 8, border: "none",
-              background: C.gold, color: C.bg,
-              fontSize: 13, fontWeight: 700, cursor: "pointer",
+              background: C.gold, color: C.bg, fontSize: 13, fontWeight: 700, cursor: "pointer",
             }}>Cerrar</button>
           </>
         )}
 
-        {/* Estado: error global */}
+        {/* Error global */}
         {status === "error" && summary && (
           <div style={{ textAlign: "center", padding: "24px 0" }}>
             <div style={{ fontSize: "2rem", marginBottom: 12 }}>❌</div>
@@ -300,13 +263,11 @@ Tu invitación con QR:
               }}>Reintentar</button>
               <button onClick={onClose} style={{
                 flex: 1, padding: "10px", borderRadius: 8, border: "none",
-                background: C.gold, color: C.bg, fontSize: 13,
-                fontWeight: 700, cursor: "pointer",
+                background: C.gold, color: C.bg, fontSize: 13, fontWeight: 700, cursor: "pointer",
               }}>Cerrar</button>
             </div>
           </div>
         )}
-
       </div>
     </div>
   );
