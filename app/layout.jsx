@@ -1,7 +1,7 @@
 // app/layout.jsx
 export const metadata = {
-  title: "Hugo Fest",
-  description: "Celebración de cumpleaños · 25 de Julio 2026",
+  title: "Hugo Fest — Hugo Monroy's Birthday",
+  description: "Celebración de cumpleaños · 20 de Julio 2026",
 };
 
 export default function RootLayout({ children }) {
