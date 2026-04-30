@@ -389,7 +389,7 @@ export default function InvitacionPublica({ guestId }) {
           }}>
             <div style={{ fontSize: 10, color: C.gold, letterSpacing: "0.18em",
               textTransform: "uppercase", marginBottom: 12, fontWeight: 700 }}>
-              🎭 Dress Code — Noche de Casino · Las Vegas Night
+              🎭 Dress Code · Las Vegas Night 🎭
             </div>
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
               <div style={{ flex: 1, minWidth: 140 }}>
@@ -417,7 +417,7 @@ export default function InvitacionPublica({ guestId }) {
             </div>
             <div style={{ marginTop: 12, fontSize: 11, color: C.textDim,
               fontStyle: "italic" }}>
-              Paleta de colores: Blanco · Negro · Rojo Intenso · Dorado
+        
             </div>
           </div>
 
