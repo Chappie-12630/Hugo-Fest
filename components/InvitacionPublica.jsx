@@ -519,7 +519,7 @@ export default function InvitacionPublica({ guestId }) {
           <div style={{ textAlign: "center", marginTop: 48, opacity: 0.3 }}>
             <div style={{ fontFamily: "'Cormorant Garamond', serif",
               fontSize: "1.1rem", color: C.gold }}>
-              Hugo Fest · 20 · VII · 2026
+              Hugo Fest · 20 · Julio · 2026
             </div>
           </div>
         </div>
