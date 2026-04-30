@@ -182,21 +182,17 @@ function QRCamera({ onScan }) {
   const rafRef    = useRef(null);
   const [ready,  setReady]  = useState(false);
   const [error,  setError]  = useState(null);
-  const [jsQR,   setJsQR]   = useState(null);
+  const jsQRRef  = useRef(null);
 
-  // Cargar librería jsQR dinámicamente
+  // Cargar jsQR como módulo npm (no CDN)
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js";
-    script.onload  = () => setJsQR(() => window.jsQR);
-    script.onerror = () => setError("No se pudo cargar el escáner.");
-    document.head.appendChild(script);
-    return () => { try { document.head.removeChild(script); } catch {} };
+    import("jsqr").then(mod => {
+      jsQRRef.current = mod.default;
+    }).catch(() => setError("No se pudo cargar el escáner."));
   }, []);
 
   // Iniciar cámara
   useEffect(() => {
-    if (!jsQR) return;
     let stream;
     (async () => {
       try {
@@ -216,15 +212,16 @@ function QRCamera({ onScan }) {
       cancelAnimationFrame(rafRef.current);
       stream?.getTracks().forEach(t => t.stop());
     };
-  }, [jsQR]);
+  }, []);
 
   // Loop de escaneo
   useEffect(() => {
-    if (!ready || !jsQR) return;
+    if (!ready) return;
     function tick() {
+      const jsQR = jsQRRef.current;
       const v = videoRef.current;
       const c = canvasRef.current;
-      if (v && c && v.readyState === v.HAVE_ENOUGH_DATA) {
+      if (jsQR && v && c && v.readyState === v.HAVE_ENOUGH_DATA) {
         c.width = v.videoWidth; c.height = v.videoHeight;
         const ctx = c.getContext("2d");
         ctx.drawImage(v, 0, 0, c.width, c.height);
@@ -236,7 +233,7 @@ function QRCamera({ onScan }) {
     }
     rafRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [ready, jsQR, onScan]);
+  }, [ready, onScan]);
 
   if (error) return (
     <div style={{ padding: 24, textAlign: "center", color: "#E0A855", fontSize: "0.88rem",
