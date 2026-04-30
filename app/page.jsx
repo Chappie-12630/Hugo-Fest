@@ -1,5 +1,4 @@
-// app/admin/page.jsx
-import AdminPanel from "../../components/AdminPanel";
-export default function AdminPage() {
-  return <AdminPanel />;
+import { redirect } from "next/navigation";
+export default function Home() {
+  redirect("/admin");
 }
