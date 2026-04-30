@@ -1,0 +1,27 @@
+// firestore.rules
+// Pega estas reglas en Firebase Console → Firestore → Rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Invitados: lectura pública (para la página del invitado y el escáner),
+    // escritura solo para admins autenticados EXCEPTO updateRSVP y markArrived
+    match /guests/{guestId} {
+
+      // Cualquiera puede leer un invitado (necesario para la página pública del QR)
+      allow read: if true;
+
+      // Solo admins autenticados pueden crear o eliminar
+      allow create, delete: if request.auth != null;
+
+      // Update: admins siempre pueden; invitados no autenticados solo pueden
+      // cambiar los campos rsvp/rsvpAt (confirmar asistencia) y arrived/arrivedAt (escáner)
+      allow update: if request.auth != null
+        || (request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['rsvp', 'rsvpAt']))
+        || (request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['arrived', 'arrivedAt']));
+    }
+  }
+}
