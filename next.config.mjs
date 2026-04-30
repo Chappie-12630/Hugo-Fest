@@ -4,6 +4,7 @@ const nextConfig = {
     domains: [
       "firebasestorage.googleapis.com",
       "images.unsplash.com",
+      "api.qrserver.com",
     ],
   },
 };
