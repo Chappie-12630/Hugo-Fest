@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { subscribeGuests, addGuest, markArrived, deleteGuest } from "../lib/guests";
+import { loginAdmin, logoutAdmin, onAuthChange } from "../lib/auth";
 import SendInviteModal from "./SendInviteModal";
 
 const C = {
@@ -150,8 +151,100 @@ function StatCard({ label, value, color = C.gold, icon }) {
   );
 }
 
+// ── Pantalla de Login ─────────────────────────────────────────────────────────
+function LoginScreen({ onLogin }) {
+  const [email,    setEmail]    = useState("");
+  const [password, setPassword] = useState("");
+  const [error,    setError]    = useState("");
+  const [loading,  setLoading]  = useState(false);
+
+  async function handleLogin() {
+    if (!email || !password) return;
+    setLoading(true);
+    setError("");
+    try {
+      await loginAdmin(email, password);
+      onLogin();
+    } catch (e) {
+      setError("Email o contraseña incorrectos");
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div style={{
+      minHeight: "100vh", background: C.bg,
+      display: "flex", alignItems: "center", justifyContent: "center", padding: 24,
+    }}>
+      <div style={{
+        width: "min(380px, 100%)", background: C.surface,
+        border: `1px solid #3D2E10`, borderRadius: 16, padding: 36,
+      }}>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <div style={{ fontSize: "2.2rem", marginBottom: 10 }}>🎰</div>
+          <div style={{ fontFamily: "Georgia,serif", fontSize: "1.6rem",
+            color: C.gold, marginBottom: 4 }}>Hugo Fest</div>
+          <div style={{ fontSize: 11, color: C.textDim, letterSpacing: "0.18em",
+            textTransform: "uppercase" }}>Panel de Administración</div>
+        </div>
+
+        {error && (
+          <div style={{
+            padding: "10px 14px", borderRadius: 8, marginBottom: 16,
+            background: "#2A0A0A", border: "1px solid #E0555530",
+            fontSize: 13, color: C.danger, textAlign: "center",
+          }}>{error}</div>
+        )}
+
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 6,
+            letterSpacing: "0.08em", textTransform: "uppercase" }}>Email</div>
+          <input
+            type="email" value={email}
+            onChange={e => setEmail(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleLogin()}
+            placeholder="admin@hugofest.com"
+            style={{
+              width: "100%", background: C.bg, border: `1px solid ${C.border}`,
+              borderRadius: 8, padding: "11px 14px", color: C.text,
+              fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "inherit",
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 6,
+            letterSpacing: "0.08em", textTransform: "uppercase" }}>Contraseña</div>
+          <input
+            type="password" value={password}
+            onChange={e => setPassword(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleLogin()}
+            placeholder="••••••••"
+            style={{
+              width: "100%", background: C.bg, border: `1px solid ${C.border}`,
+              borderRadius: 8, padding: "11px 14px", color: C.text,
+              fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "inherit",
+            }}
+          />
+        </div>
+
+        <button onClick={handleLogin} disabled={loading} style={{
+          width: "100%", padding: "13px", borderRadius: 8, border: "none",
+          background: loading ? C.border : `linear-gradient(135deg, ${C.gold}, #A88030)`,
+          color: loading ? C.textDim : C.bg,
+          fontSize: 14, fontWeight: 700, cursor: loading ? "default" : "pointer",
+          letterSpacing: "0.08em", transition: "all 0.2s",
+        }}>
+          {loading ? "Entrando..." : "Entrar al panel →"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ── Componente principal ──────────────────────────────────────────────────────
 export default function AdminPanel() {
+  const [user,       setUser]       = useState(undefined); // undefined=cargando, null=no auth
   const [guests,     setGuests]     = useState([]);
   const [loading,    setLoading]    = useState(true);
   const [search,     setSearch]     = useState("");
@@ -162,10 +255,18 @@ export default function AdminPanel() {
   const [sendGuests, setSendGuests] = useState(null);
   const [deleteId,   setDeleteId]   = useState(null);
 
+  // Escuchar estado de autenticación
   useEffect(() => {
-    const unsub = subscribeGuests(data => { setGuests(data); setLoading(false); });
+    const unsub = onAuthChange(u => setUser(u ?? null));
     return () => unsub();
   }, []);
+
+  // Suscribirse a invitados solo si está autenticado
+  useEffect(() => {
+    if (!user) return;
+    const unsub = subscribeGuests(data => { setGuests(data); setLoading(false); });
+    return () => unsub();
+  }, [user]);
 
   const confirmed = guests.filter(g => g.rsvp === "confirmed").length;
   const arrived   = guests.filter(g => g.arrived).length;
@@ -186,6 +287,20 @@ export default function AdminPanel() {
     await deleteGuest(id);
     setDeleteId(null);
   }
+
+  if (user === undefined) return (
+    <div style={{ minHeight: "100vh", background: C.bg, display: "flex",
+      alignItems: "center", justifyContent: "center" }}>
+      <div style={{ textAlign: "center" }}>
+        <div style={{ fontSize: "2rem", marginBottom: 12 }}>🎰</div>
+        <div style={{ color: C.gold, fontFamily: "Georgia,serif", fontSize: 18 }}>
+          Cargando Hugo Fest...
+        </div>
+      </div>
+    </div>
+  );
+
+  if (!user) return <LoginScreen onLogin={() => {}} />;
 
   if (loading) return (
     <div style={{ minHeight: "100vh", background: C.bg, display: "flex",
@@ -248,6 +363,14 @@ export default function AdminPanel() {
                 fontWeight: 700, cursor: "pointer",
               }} onClick={() => setShowAdd(true)}>
                 + Invitado
+              </button>
+              <button style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                padding: "8px 14px", borderRadius: 8, border: `1px solid ${C.border}`,
+                background: "transparent", color: C.textMuted, fontSize: 12,
+                cursor: "pointer",
+              }} onClick={logoutAdmin}>
+                Salir
               </button>
             </div>
           </div>
