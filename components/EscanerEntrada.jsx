@@ -306,6 +306,8 @@ export default function EscanerEntrada() {
     return () => unsub();
   }, [unlocked]);
 
+  const [debugLog, setDebugLog] = useState([]);
+
   const handleScan = useCallback((raw) => {
     if (cooldown.current) return;
     cooldown.current = true;
@@ -315,7 +317,8 @@ export default function EscanerEntrada() {
     const guest = guests[id];
     const time  = nowTime();
 
-    console.log("QR escaneado:", raw, "→ ID:", id, "→ Invitado:", guest);
+    // Debug visible en pantalla
+    setDebugLog(prev => [`[${time}] RAW: ${raw.slice(0,40)}... → ID: ${id} → ${guest ? guest.name : "NO ENCONTRADO"}`, ...prev.slice(0,4)]);
 
     if (!guest) {
       setResult({ type: "unknown" });
@@ -438,6 +441,22 @@ export default function EscanerEntrada() {
                   textAlign: "center", letterSpacing: "0.08em" }}>
                   Centra el QR del invitado en el marco dorado
                 </div>
+                {/* Panel debug temporal */}
+                {debugLog.length > 0 && (
+                  <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 8,
+                    background: "#0A0F18", border: "1px solid #1E2A3A" }}>
+                    <div style={{ fontSize: "0.6rem", color: "#C9A84C",
+                      letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6 }}>
+                      Debug QR
+                    </div>
+                    {debugLog.map((log, i) => (
+                      <div key={i} style={{ fontSize: "0.7rem", color: i === 0 ? "#D4DDE8" : "#3D4F63",
+                        fontFamily: "monospace", marginBottom: 3, wordBreak: "break-all" }}>
+                        {log}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
