@@ -283,9 +283,9 @@ export default function InvitacionPublica({ guestId }) {
         overflow: "hidden" }}>
 
         {/* Cartas decorativas de fondo */}
-        <span className="suit" style={{ top: "2%",  left:  "2%",  transform: "rotate(-15deg)" }}>♠</span>
-        <span className="suit" style={{ top: "2%",  right: "2%",  transform: "rotate(12deg)"  }}>♥</span>
-        <span className="suit" style={{ bottom:"5%",left:  "4%",  transform: "rotate(10deg)"  }}>♦</span>
+       <span className="suit" style={{ top: "2%",  left:  "2%",  transform: "rotate(-15deg)" }}>♠</span>
+        <span className="suit" style={{ top: "2%",  right: "2%",  transform: "rotate(12deg)", opacity: 0.12, color: "#B22222"  }}>♥</span>
+        <span className="suit" style={{ bottom:"5%",left:  "4%",  transform: "rotate(10deg)", opacity: 0.12, color: "#B22222"  }}>♦</span>
         <span className="suit" style={{ bottom:"5%",right: "4%",  transform: "rotate(-8deg)"  }}>♣</span>
 
         {/* Borde superior dorado */}
