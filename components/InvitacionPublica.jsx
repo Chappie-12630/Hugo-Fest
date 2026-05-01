@@ -393,19 +393,8 @@ export default function InvitacionPublica({ guestId }) {
               🎭 Dress Code
             </div>
 
-            {/* Foto dress code */}
-            <div style={{ marginBottom: 16, borderRadius: 10, overflow: "hidden",
-              border: `1px solid ${C.border}` }}>
-              <img
-                src="/images/dresscode.jpg"
-                alt="Dress Code Hugo Fest"
-                style={{ width: "100%", display: "block", objectFit: "cover",
-                  maxHeight: 320 }}
-                loading="lazy"
-              />
-            </div>
-
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+            {/* Texto primero */}
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}>
               <div style={{ flex: 1, minWidth: 140 }}>
                 <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 6, fontWeight: 600 }}>
                   Hombres
@@ -428,6 +417,17 @@ export default function InvitacionPublica({ guestId }) {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Imagen completa debajo */}
+            <div style={{ borderRadius: 10, overflow: "hidden",
+              border: `1px solid ${C.border}` }}>
+              <img
+                src="/images/dresscode.jpg"
+                alt="Dress Code Hugo Fest"
+                style={{ width: "100%", height: "auto", display: "block" }}
+                loading="lazy"
+              />
             </div>
           </div>
 
