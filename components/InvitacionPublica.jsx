@@ -1,4 +1,4 @@
-"use client";
+VII"use client";
 // components/InvitacionPublica.jsx — Página del invitado · Hugo Fest 🎰
 
 import { useState, useEffect, useRef } from "react";
@@ -564,7 +564,7 @@ export default function InvitacionPublica({ guestId }) {
             </button>
 
             <div style={{ fontSize: 11, color: C.textDim, marginTop: 16, lineHeight: 1.6 }}>
-              Guarda esta pantalla o toma captura de tu QR.<br />
+              Guarda esta pagina o toma captura de tu QR.<br />
               La invitación es personal e intransferible.
             </div>
           </div>
@@ -573,7 +573,7 @@ export default function InvitacionPublica({ guestId }) {
           <div style={{ textAlign: "center", marginTop: 48, opacity: 0.3 }}>
             <div style={{ fontFamily: "'Cormorant Garamond', serif",
               fontSize: "1.1rem", color: C.gold }}>
-              Hugo Fest · 20 · VII · 2026
+              Hugo Fest · 20 · Julio · 2026
             </div>
           </div>
         </div>
