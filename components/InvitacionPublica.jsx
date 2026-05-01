@@ -1,4 +1,4 @@
-VII"use client";
+"use client";
 // components/InvitacionPublica.jsx — Página del invitado · Hugo Fest 🎰
 
 import { useState, useEffect, useRef } from "react";
