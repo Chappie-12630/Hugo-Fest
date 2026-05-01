@@ -14,7 +14,7 @@ function nowTime() {
 }
 
 function parseQR(raw) {
-  const match = raw.match(/invitado\/([a-zA-Z0-9]+)/);
+  const match = raw.match(/invitado\/([a-zA-Z0-9_-]+)/);
   return match ? match[1] : raw.trim();
 }
 
@@ -309,11 +309,13 @@ export default function EscanerEntrada() {
   const handleScan = useCallback((raw) => {
     if (cooldown.current) return;
     cooldown.current = true;
-    setTimeout(() => { cooldown.current = false; }, 3000);
+    setTimeout(() => { cooldown.current = false; }, 2000);
 
     const id    = parseQR(raw);
     const guest = guests[id];
     const time  = nowTime();
+
+    console.log("QR escaneado:", raw, "→ ID:", id, "→ Invitado:", guest);
 
     if (!guest) {
       setResult({ type: "unknown" });
