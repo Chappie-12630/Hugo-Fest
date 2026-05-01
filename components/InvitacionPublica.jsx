@@ -355,9 +355,53 @@ export default function InvitacionPublica({ guestId }) {
 
           {/* ── DATOS DEL EVENTO ─────────────────────────────────────────── */}
           <div className="fade-up d3" style={{ display: "flex", gap: 10, marginBottom: 24 }}>
-            <InfoCard emoji="📅" label="Fecha"  value={EVENT.date}     />
-            <InfoCard emoji="🕔" label="Hora"   value={EVENT.time}     />
-            <InfoCard emoji="📍" label="Lugar"  value={EVENT.location} />
+            <InfoCard emoji="📅" label="Fecha"  value={EVENT.date} />
+            <InfoCard emoji="🕔" label="Hora"   value={EVENT.time} />
+          </div>
+
+          {/* ── UBICACIÓN CON MAPA ───────────────────────────────────────── */}
+          <div className="fade-up d3" style={{
+            background: C.surface, border: `1px solid ${C.border}`,
+            borderRadius: 12, overflow: "hidden", marginBottom: 24,
+          }}>
+            {/* Mapa embebido */}
+            <iframe
+              width="100%"
+              height="220"
+              style={{ display: "block", border: "none" }}
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+              src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&q=Festivo+Jardin,Blvd.+Fundadores+2681,Juárez,22040+Tijuana,BC,Mexico&zoom=16&language=es`}
+            />
+            {/* Info y botón */}
+            <div style={{ padding: "16px 18px", borderTop: `1px solid ${C.border}` }}>
+              <div style={{ fontSize: 10, color: C.gold, letterSpacing: "0.18em",
+                textTransform: "uppercase", marginBottom: 8, fontWeight: 700 }}>
+                📍 Lugar
+              </div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: C.text,
+                fontFamily: "'Cormorant Garamond', serif", marginBottom: 4 }}>
+                Festivo Jardín
+              </div>
+              <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 14, lineHeight: 1.6 }}>
+                Blvd. Fundadores 2681, Juárez,<br />22040 Tijuana, B.C.
+              </div>
+              <a
+                href="https://maps.google.com/?q=Festivo+Jardin+Blvd+Fundadores+2681+Tijuana"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  padding: "9px 18px", borderRadius: 8,
+                  background: `linear-gradient(135deg, ${C.red}, ${C.redLight})`,
+                  color: C.white, fontSize: 12, fontWeight: 700,
+                  textDecoration: "none", letterSpacing: "0.06em",
+                  boxShadow: `0 4px 14px ${C.red}40`,
+                }}>
+                🗺️ Cómo llegar
+              </a>
+            </div>
           </div>
 
           <GoldDivider />
