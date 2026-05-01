@@ -386,11 +386,25 @@ export default function InvitacionPublica({ guestId }) {
           <div className="fade-up d4" style={{
             background: C.surface, border: `1px solid ${C.border}`,
             borderRadius: 12, padding: "18px 20px", marginBottom: 24,
+            overflow: "hidden",
           }}>
             <div style={{ fontSize: 10, color: C.gold, letterSpacing: "0.18em",
               textTransform: "uppercase", marginBottom: 12, fontWeight: 700 }}>
-              🎭 Dress Code · Las Vegas Night 🎭
+              🎭 Dress Code
             </div>
+
+            {/* Foto dress code */}
+            <div style={{ marginBottom: 16, borderRadius: 10, overflow: "hidden",
+              border: `1px solid ${C.border}` }}>
+              <img
+                src="/images/dresscode.jpg"
+                alt="Dress Code Hugo Fest"
+                style={{ width: "100%", display: "block", objectFit: "cover",
+                  maxHeight: 320 }}
+                loading="lazy"
+              />
+            </div>
+
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
               <div style={{ flex: 1, minWidth: 140 }}>
                 <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 6, fontWeight: 600 }}>
@@ -414,10 +428,6 @@ export default function InvitacionPublica({ guestId }) {
                   </div>
                 ))}
               </div>
-            </div>
-            <div style={{ marginTop: 12, fontSize: 11, color: C.textDim,
-              fontStyle: "italic" }}>
-        
             </div>
           </div>
 
@@ -519,7 +529,7 @@ export default function InvitacionPublica({ guestId }) {
           <div style={{ textAlign: "center", marginTop: 48, opacity: 0.3 }}>
             <div style={{ fontFamily: "'Cormorant Garamond', serif",
               fontSize: "1.1rem", color: C.gold }}>
-              Hugo Fest · 20 · Julio · 2026
+              Hugo Fest · 20 · VII · 2026
             </div>
           </div>
         </div>
