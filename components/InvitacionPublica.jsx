@@ -210,7 +210,7 @@ export default function InvitacionPublica({ guestId }) {
 
   const base      = typeof window !== "undefined" ? window.location.origin : "https://TU-PROYECTO.vercel.app";
   const inviteUrl = `${base}/invitado/${guestId}`;
-  const qrUrl     = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(inviteUrl)}&color=FFD700&bgcolor=000000&margin=12`;
+  const qrUrl     = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(inviteUrl)}&color=E8C97A&bgcolor=000000&margin=12`;
 
   // ── Loading / error states ────────────────────────────────────────────────
   if (status === "loading") return (
