@@ -17,10 +17,8 @@ const C = {
 
 // ── Helpers de estilo ─────────────────────────────────────────────────────────
 function genQRUrl(id) {
-  // 🔴 IMPORTANTE: Cambia esta URL por tu dominio real de Vercel después de publicar
-  // Ejemplo: const base = "https://hugo-fest.vercel.app";
   const base = typeof window !== "undefined" ? window.location.origin : "https://TU-PROYECTO.vercel.app";
-  return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(base + "/invitado/" + id)}&color=C9A84C&bgcolor=080C12`;
+  return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(base + "/invitado/" + id)}&color=000000&bgcolor=F5E6B8`;
 }
 
 const pill = (color) => ({
