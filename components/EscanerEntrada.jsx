@@ -3,9 +3,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { subscribeGuests, markArrived }              from "../lib/guests";
-
-// 🔐 Cambia este PIN en Vercel → Settings → Environment Variables → NEXT_PUBLIC_SCANNER_PIN
-const SCANNER_PIN = process.env.NEXT_PUBLIC_SCANNER_PIN || "5296";
+import { loginAdmin, logoutAdmin, onAuthChange }     from "../lib/auth";
 
 // ── Utils ─────────────────────────────────────────────────────────────────────
 function nowTime() {
@@ -18,87 +16,88 @@ function parseQR(raw) {
   return match ? match[1] : raw.trim();
 }
 
-// ── PIN Screen ────────────────────────────────────────────────────────────────
-function PINScreen({ onUnlock }) {
-  const [pin,   setPin]   = useState("");
-  const [shake, setShake] = useState(false);
+// ── Login Screen ──────────────────────────────────────────────────────────────
+function LoginScreen({ onLogin }) {
+  const [email,    setEmail]    = useState("");
+  const [password, setPassword] = useState("");
+  const [error,    setError]    = useState("");
+  const [loading,  setLoading]  = useState(false);
 
-  function press(d) {
-    if (pin.length >= 4) return;
-    const next = pin + d;
-    setPin(next);
-    if (next.length === 4) {
-      if (next === SCANNER_PIN) {
-        setTimeout(() => onUnlock(), 300);
-      } else {
-        setShake(true);
-        setTimeout(() => { setPin(""); setShake(false); }, 600);
-      }
+  async function handleLogin() {
+    if (!email || !password) return;
+    setLoading(true);
+    setError("");
+    try {
+      await loginAdmin(email, password);
+      onLogin();
+    } catch {
+      setError("Email o contraseña incorrectos");
+      setLoading(false);
     }
   }
 
   return (
     <div style={{
-      minHeight: "100vh", display: "flex", flexDirection: "column",
-      alignItems: "center", justifyContent: "center",
-      background: "#07090E", padding: 24,
+      minHeight: "100vh", background: "#07090E",
+      display: "flex", alignItems: "center", justifyContent: "center", padding: 24,
     }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@400;600&display=swap');
-        @keyframes shake {
-          0%,100% { transform: translateX(0); }
-          20%,60% { transform: translateX(-8px); }
-          40%,80% { transform: translateX(8px); }
-        }
+        input::placeholder { color: #2A3A50; }
       `}</style>
-
-      {/* Logo */}
-      <div style={{ marginBottom: 8, fontSize: "2.2rem", textAlign: "center" }}>🎰</div>
-      <div style={{ fontFamily: "'Cormorant Garamond', serif",
-        fontSize: "1.9rem", color: "#C9A84C", marginBottom: 4, textAlign: "center" }}>
-        Hugo Fest
-      </div>
-      <div style={{ fontSize: "0.65rem", color: "#3D4F63", letterSpacing: "0.2em",
-        textTransform: "uppercase", marginBottom: 48 }}>
-        Escáner de Entrada · 20 Julio 2026
-      </div>
-
-      {/* Puntos PIN */}
       <div style={{
-        display: "flex", gap: 16, marginBottom: 40,
-        animation: shake ? "shake 0.5s ease" : "none",
+        width: "min(360px, 100%)", background: "#0E1420",
+        border: "1px solid #3D2E10", borderRadius: 16, padding: 36,
       }}>
-        {[0,1,2,3].map(i => (
-          <div key={i} style={{
-            width: 15, height: 15, borderRadius: "50%",
-            border: "2px solid #C9A84C50",
-            background: pin.length > i ? "#C9A84C" : "transparent",
-            transition: "all 0.2s",
-          }} />
-        ))}
-      </div>
-
-      {/* Teclado numérico */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 72px)", gap: 12,
-        fontFamily: "'DM Sans', sans-serif" }}>
-        {[1,2,3,4,5,6,7,8,9,null,0,"⌫"].map((k, i) => (
-          <button key={i}
-            onClick={() => k === "⌫" ? setPin(p => p.slice(0,-1)) : k !== null && press(String(k))}
-            disabled={k === null}
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <div style={{ fontSize: "2rem", marginBottom: 10 }}>🎰</div>
+          <div style={{ fontFamily: "'Cormorant Garamond', serif",
+            fontSize: "1.6rem", color: "#C9A84C", marginBottom: 4 }}>Hugo Fest</div>
+          <div style={{ fontSize: 11, color: "#3D4F63", letterSpacing: "0.18em",
+            textTransform: "uppercase" }}>Escáner · Acceso Admin</div>
+        </div>
+        {error && (
+          <div style={{
+            padding: "10px 14px", borderRadius: 8, marginBottom: 16,
+            background: "#2A0A0A", border: "1px solid #E0555530",
+            fontSize: 13, color: "#E05555", textAlign: "center",
+          }}>{error}</div>
+        )}
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 11, color: "#7A8BA0", marginBottom: 6,
+            letterSpacing: "0.08em", textTransform: "uppercase" }}>Email</div>
+          <input type="email" value={email}
+            onChange={e => setEmail(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleLogin()}
+            placeholder="admin@hugofest.com"
             style={{
-              width: 72, height: 72, borderRadius: 12,
-              border: `1px solid ${k === null ? "transparent" : "#1E2A3A"}`,
-              background: k === null ? "transparent" : "#0E1420",
-              color: k === "⌫" ? "#5A6B80" : "#D4DDE8",
-              fontSize: k === "⌫" ? "1.2rem" : "1.5rem",
-              fontFamily: "'Cormorant Garamond', serif",
-              cursor: k === null ? "default" : "pointer",
-              transition: "background 0.15s",
-            }}
-            onMouseDown={e => { if (k !== null) e.currentTarget.style.background = "#1A2744"; }}
-            onMouseUp={e => { if (k !== null) e.currentTarget.style.background = "#0E1420"; }}
-          >{k}</button>
-        ))}
+              width: "100%", background: "#080C12", border: "1px solid #1E2A3A",
+              borderRadius: 8, padding: "11px 14px", color: "#E8EDF5",
+              fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "inherit",
+            }} />
+        </div>
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 11, color: "#7A8BA0", marginBottom: 6,
+            letterSpacing: "0.08em", textTransform: "uppercase" }}>Contraseña</div>
+          <input type="password" value={password}
+            onChange={e => setPassword(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleLogin()}
+            placeholder="••••••••"
+            style={{
+              width: "100%", background: "#080C12", border: "1px solid #1E2A3A",
+              borderRadius: 8, padding: "11px 14px", color: "#E8EDF5",
+              fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "inherit",
+            }} />
+        </div>
+        <button onClick={handleLogin} disabled={loading} style={{
+          width: "100%", padding: "13px", borderRadius: 8, border: "none",
+          background: loading ? "#1E2A3A" : "linear-gradient(135deg, #C9A84C, #A88030)",
+          color: loading ? "#3D4F63" : "#07090E",
+          fontSize: 14, fontWeight: 700, cursor: loading ? "default" : "pointer",
+          letterSpacing: "0.08em", transition: "all 0.2s",
+        }}>
+          {loading ? "Verificando..." : "Entrar →"}
+        </button>
       </div>
     </div>
   );
@@ -226,7 +225,7 @@ function QRCamera({ onScan }) {
         const ctx = c.getContext("2d");
         ctx.drawImage(v, 0, 0, c.width, c.height);
         const img  = ctx.getImageData(0, 0, c.width, c.height);
-        const code = jsQR(img.data, img.width, img.height, { inversionAttempts: "dontInvert" });
+        const code = jsQR(img.data, img.width, img.height, { inversionAttempts: "attemptBoth" });
         if (code?.data) { onScan(code.data); return; }
       }
       rafRef.current = requestAnimationFrame(tick);
@@ -287,7 +286,7 @@ function QRCamera({ onScan }) {
 
 // ── Componente Principal ──────────────────────────────────────────────────────
 export default function EscanerEntrada() {
-  const [unlocked,  setUnlocked]  = useState(false);
+  const [user,      setUser]      = useState(undefined);
   const [guests,    setGuests]    = useState({});
   const [arrivals,  setArrivals]  = useState([]);
   const [result,    setResult]    = useState(null);
@@ -295,16 +294,22 @@ export default function EscanerEntrada() {
   const [manualId,  setManualId]  = useState("");
   const cooldown = useRef(false);
 
-  // Suscribirse a invitados de Firebase
+  // Escuchar autenticación
   useEffect(() => {
-    if (!unlocked) return;
+    const unsub = onAuthChange(u => setUser(u ?? null));
+    return () => unsub();
+  }, []);
+
+  // Suscribirse a invitados solo si está autenticado
+  useEffect(() => {
+    if (!user) return;
     const unsub = subscribeGuests(data => {
       const map = {};
       data.forEach(g => { map[g.id] = g; });
       setGuests(map);
     });
     return () => unsub();
-  }, [unlocked]);
+  }, [user]);
 
   const [debugLog, setDebugLog] = useState([]);
 
@@ -340,7 +345,17 @@ export default function EscanerEntrada() {
     setManualId("");
   }
 
-  if (!unlocked) return <PINScreen onUnlock={() => setUnlocked(true)} />;
+  if (user === undefined) return (
+    <div style={{ minHeight: "100vh", background: "#07090E", display: "flex",
+      alignItems: "center", justifyContent: "center" }}>
+      <div style={{ textAlign: "center", color: "#C9A84C", fontFamily: "Georgia,serif", fontSize: 18 }}>
+        <div style={{ fontSize: "2rem", marginBottom: 12 }}>🎰</div>
+        Cargando...
+      </div>
+    </div>
+  );
+
+  if (!user) return <LoginScreen onLogin={() => {}} />;
 
   const guestList    = Object.values(guests);
   const totalGuests  = guestList.length;
@@ -398,6 +413,11 @@ export default function EscanerEntrada() {
                   letterSpacing: "0.1em", textTransform: "uppercase" }}>{s.label}</div>
               </div>
             ))}
+            <button onClick={logoutAdmin} style={{
+              padding: "7px 14px", borderRadius: 8, border: "1px solid #1E2A3A",
+              background: "transparent", color: "#5A6B80", fontSize: 12,
+              cursor: "pointer", fontFamily: "inherit",
+            }}>Salir</button>
           </div>
         </div>
 
