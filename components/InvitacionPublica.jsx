@@ -210,7 +210,7 @@ export default function InvitacionPublica({ guestId }) {
 
   const base      = typeof window !== "undefined" ? window.location.origin : "https://TU-PROYECTO.vercel.app";
   const inviteUrl = `${base}/invitado/${guestId}`;
-  const qrUrl     = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(inviteUrl)}&color=C9A84C&bgcolor=080C12&margin=12`;
+  const qrUrl     = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(inviteUrl)}&color=000000&bgcolor=F5E6B8&margin=12`;
 
   // ── Loading / error states ────────────────────────────────────────────────
   if (status === "loading") return (
@@ -283,7 +283,7 @@ export default function InvitacionPublica({ guestId }) {
         overflow: "hidden" }}>
 
         {/* Cartas decorativas de fondo */}
-       <span className="suit" style={{ top: "2%",  left:  "2%",  transform: "rotate(-15deg)" }}>♠</span>
+        <span className="suit" style={{ top: "2%",  left:  "2%",  transform: "rotate(-15deg)" }}>♠</span>
         <span className="suit" style={{ top: "2%",  right: "2%",  transform: "rotate(12deg)", opacity: 0.12, color: "#B22222"  }}>♥</span>
         <span className="suit" style={{ bottom:"5%",left:  "4%",  transform: "rotate(10deg)", opacity: 0.12, color: "#B22222"  }}>♦</span>
         <span className="suit" style={{ bottom:"5%",right: "4%",  transform: "rotate(-8deg)"  }}>♣</span>
@@ -564,7 +564,7 @@ export default function InvitacionPublica({ guestId }) {
             </button>
 
             <div style={{ fontSize: 11, color: C.textDim, marginTop: 16, lineHeight: 1.6 }}>
-              Guarda esta pagina o toma captura de tu QR.<br />
+              Guarda esta pantalla o toma captura de tu QR.<br />
               La invitación es personal e intransferible.
             </div>
           </div>
@@ -573,7 +573,7 @@ export default function InvitacionPublica({ guestId }) {
           <div style={{ textAlign: "center", marginTop: 48, opacity: 0.3 }}>
             <div style={{ fontFamily: "'Cormorant Garamond', serif",
               fontSize: "1.1rem", color: C.gold }}>
-              Hugo Fest · 20 · Julio · 2026
+              Hugo Fest · 20 · VII · 2026
             </div>
           </div>
         </div>
