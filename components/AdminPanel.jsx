@@ -18,7 +18,7 @@ const C = {
 // ── Helpers de estilo ─────────────────────────────────────────────────────────
 function genQRUrl(id) {
   const base = typeof window !== "undefined" ? window.location.origin : "https://TU-PROYECTO.vercel.app";
-  return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(base + "/invitado/" + id)}&color=000000&bgcolor=F5E6B8`;
+  return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(base + "/invitado/" + id)}&color=000000&bgcolor=ffffff`;
 }
 
 const pill = (color) => ({
@@ -37,8 +37,36 @@ function statusLabel(r) { return r === "confirmed" ? "Confirmado" : r === "decli
 // ── Modal QR ──────────────────────────────────────────────────────────────────
 function QRModal({ guest, onClose }) {
   if (!guest) return null;
-  const base = typeof window !== "undefined" ? window.location.origin : "https://TU-PROYECTO.vercel.app";
+  const base      = typeof window !== "undefined" ? window.location.origin : "https://hugo-fest.vercel.app";
   const inviteUrl = `${base}/invitado/${guest.id}`;
+  const qrLowUrl  = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(inviteUrl)}&color=000000&bgcolor=F5E6B8`;
+  const qrHighUrl = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encodeURIComponent(inviteUrl)}&color=000000&bgcolor=F5E6B8&margin=20`;
+
+  const [copied,     setCopied]     = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
+  function copyLink() {
+    navigator.clipboard.writeText(inviteUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  async function downloadQR() {
+    setDownloading(true);
+    try {
+      const res  = await fetch(qrHighUrl);
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement("a");
+      a.href     = url;
+      a.download = `QR-${guest.name.replace(/\s+/g, "_")}.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      window.open(qrHighUrl, "_blank");
+    }
+    setDownloading(false);
+  }
 
   return (
     <div onClick={onClose} style={{
@@ -46,28 +74,69 @@ function QRModal({ guest, onClose }) {
       display: "flex", alignItems: "center", justifyContent: "center",
     }}>
       <div onClick={e => e.stopPropagation()} style={{
-        ...cardStyle, maxWidth: 320, textAlign: "center", padding: 32, borderColor: "#3D2E10",
+        ...cardStyle, maxWidth: 340, textAlign: "center",
+        padding: 32, borderColor: "#3D2E10",
       }}>
         <div style={{ fontSize: 11, color: C.gold, letterSpacing: "0.15em",
-          textTransform: "uppercase", marginBottom: 4 }}>Invitación QR · Hugo Fest</div>
+          textTransform: "uppercase", marginBottom: 4 }}>
+          Invitación QR · Hugo Fest
+        </div>
         <div style={{ fontSize: 18, fontWeight: 700, color: C.text,
           fontFamily: "Georgia,serif", marginBottom: 4 }}>{guest.name}</div>
-        <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 20 }}>Mesa {guest.table}</div>
-        <div style={{ background: C.bg, borderRadius: 12, padding: 16,
-          display: "inline-block", border: `1px solid ${C.border}` }}>
-          <img src={genQRUrl(guest.id)} alt="QR" width={160} height={160}
-            style={{ display: "block" }} loading="lazy" />
+        <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 20 }}>
+          Mesa {guest.table}
         </div>
-        <div style={{ fontSize: 11, color: C.textDim, marginTop: 14,
-          wordBreak: "break-all", lineHeight: 1.5 }}>
+
+        {/* QR */}
+        <div style={{ background: "#F5E6B8", borderRadius: 12, padding: 16,
+          display: "inline-block", marginBottom: 20 }}>
+          <img src={qrLowUrl} alt="QR" width={160} height={160}
+            style={{ display: "block", borderRadius: 6 }} loading="lazy" />
+        </div>
+
+        {/* Link */}
+        <div style={{ fontSize: 10, color: C.textDim, marginBottom: 20,
+          wordBreak: "break-all", lineHeight: 1.5, padding: "8px 12px",
+          background: C.bg, borderRadius: 6, border: `1px solid ${C.border}` }}>
           {inviteUrl}
         </div>
-        <button style={{
-          display: "inline-flex", alignItems: "center", justifyContent: "center",
-          padding: "10px 20px", borderRadius: 8, border: `1px solid ${C.border}`,
-          background: "transparent", color: C.textMuted, fontSize: 12,
-          cursor: "pointer", marginTop: 20, width: "100%",
-        }} onClick={onClose}>Cerrar</button>
+
+        {/* Botones */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <button onClick={downloadQR} disabled={downloading} style={{
+            width: "100%", padding: "11px", borderRadius: 8, border: "none",
+            background: downloading ? C.border : `linear-gradient(135deg, ${C.gold}, #A88030)`,
+            color: downloading ? C.textDim : C.bg,
+            fontSize: 13, fontWeight: 700, cursor: downloading ? "default" : "pointer",
+          }}>
+            {downloading ? "Descargando..." : "⬇️ Descargar QR (alta resolución)"}
+          </button>
+
+          <button onClick={copyLink} style={{
+            width: "100%", padding: "11px", borderRadius: 8,
+            border: `1px solid ${copied ? C.green : C.border}`,
+            background: copied ? C.green + "15" : "transparent",
+            color: copied ? C.green : C.textMuted,
+            fontSize: 13, fontWeight: 600, cursor: "pointer",
+          }}>
+            {copied ? "✓ Link copiado" : "🔗 Copiar link de invitación"}
+          </button>
+
+          <a href={inviteUrl} target="_blank" rel="noopener noreferrer" style={{
+            display: "block", padding: "11px", borderRadius: 8,
+            border: `1px solid ${C.border}`, background: "transparent",
+            color: C.textMuted, fontSize: 13, fontWeight: 600,
+            textDecoration: "none", textAlign: "center",
+          }}>
+            👁️ Ver invitación
+          </a>
+
+          <button onClick={onClose} style={{
+            width: "100%", padding: "10px", borderRadius: 8,
+            border: `1px solid ${C.border}`, background: "transparent",
+            color: C.textDim, fontSize: 12, cursor: "pointer",
+          }}>Cerrar</button>
+        </div>
       </div>
     </div>
   );
