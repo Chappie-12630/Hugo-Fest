@@ -463,16 +463,14 @@ export default function InvitacionPublica({ guestId }) {
               </div>
             </div>
 
-
-             {/* Contenedor de fotos - Estructura corregida */}
-        <div style={{ 
-              borderRadius: 10, 
-              overflow: "hidden",
-              border: `1px solid ${C.border}`,
-              display: "flex",     // Esto pone las fotos una al lado de la otra
-              width: "100%" 
-         }}>
-               {/* Foto 1: Hombre (Izquierda) */}
+            {/* Fotos */}
+             <div style={{ 
+  borderRadius: 10, 
+  overflow: "hidden", 
+  border: `1px solid ${C.border}`,
+  display: "flex" 
+}}>
+  {/* Imagen Izquierda (Hombre) */}
   <img
     src="/images/Male-Dress-Code.jpg"
     alt="Dress Code Masculino"
@@ -480,7 +478,7 @@ export default function InvitacionPublica({ guestId }) {
     loading="lazy"
   />
 
-  {/* Foto 2: Mujer - Vestido Rojo (Derecha) */}
+  {/* Imagen Derecha (Mujer) */}
   <img
     src="/images/Female-Dress-Code.jpg"
     alt="Dress Code Femenino"
