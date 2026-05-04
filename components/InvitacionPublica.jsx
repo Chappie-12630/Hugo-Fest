@@ -463,30 +463,19 @@ export default function InvitacionPublica({ guestId }) {
               </div>
             </div>
 
-            {/* Fotos */}
-             <div style={{ 
-  borderRadius: 10, 
-  overflow: "hidden", 
-  border: `1px solid ${C.border}`,
-  display: "flex" 
-}}>
-  {/* Imagen Izquierda (Hombre) */}
-  <img
-    src="/images/Male-Dress-Code.jpg"
-    alt="Dress Code Masculino"
-    style={{ width: "50%", height: "auto", display: "block", objectFit: "cover" }}
-    loading="lazy"
-  />
+            {/* Imagen completa debajo */}
+            <div style={{ borderRadius: 10, overflow: "hidden",
+              border: `1px solid ${C.border}` }}>
+              <img
+                src="/images/dresscode.jpg"
+                alt="Dress Code Hugo Fest"
+                style={{ width: "100%", height: "auto", display: "block" }}
+                loading="lazy"
+              />
+            </div>
+          </div>
 
-  {/* Imagen Derecha (Mujer) */}
-  <img
-    src="/images/Female-Dress-Code.jpg"
-    alt="Dress Code Femenino"
-    style={{ width: "50%", height: "auto", display: "block", objectFit: "cover" }}
-    loading="lazy"
-  />
-</div>
-
+          
           {/* ── DINÁMICA ─────────────────────────────────────────────────── */}
           <div className="fade-up d5" style={{
             background: C.surface, border: `1px solid ${C.border}`,
