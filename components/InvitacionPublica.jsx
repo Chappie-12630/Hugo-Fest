@@ -467,7 +467,11 @@ export default function InvitacionPublica({ guestId }) {
             <div style={{ borderRadius: 10, overflow: "hidden",
               border: `1px solid ${C.border}` }}>
               <img
-                src="/images/dresscode.jpg"
+                src="/images/Male-Dress-Code.jpg"
+                alt="Dress Code Hugo Fest"
+                style={{ width: "100%", height: "auto", display: "block" }}
+                loading="lazy"
+                 src="/images/Female-Dress-Code.jpg"
                 alt="Dress Code Hugo Fest"
                 style={{ width: "100%", height: "auto", display: "block" }}
                 loading="lazy"
