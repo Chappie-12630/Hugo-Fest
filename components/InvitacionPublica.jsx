@@ -469,11 +469,11 @@ export default function InvitacionPublica({ guestId }) {
               <img
                 src="/images/Male-Dress-Code.jpg"
                 alt="Dress Code Hugo Fest"
-                style={{ width: "100%", height: "auto", display: "block" }}
+                style={{ width: "50%", height: "auto", display: "block" }}
                 loading="lazy"
                  src="/images/Female-Dress-Code.jpg"
                 alt="Dress Code Hugo Fest"
-                style={{ width: "100%", height: "auto", display: "block" }}
+                style={{ width: "50%", height: "auto", display: "block" }}
                 loading="lazy"
               />
             </div>
