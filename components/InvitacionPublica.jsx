@@ -462,22 +462,32 @@ export default function InvitacionPublica({ guestId }) {
                 ))}
               </div>
             </div>
+{/* Contenedor principal con Flexbox */}
+<div style={{ 
+  borderRadius: 10, 
+  overflow: "hidden", 
+  border: `1px solid ${C.border}`,
+  display: "flex",       // Alinea los hijos en una fila
+  alignItems: "stretch"  // Asegura que ambas imágenes tengan la misma altura
+}}>
+  
+  {/* 1. Imagen del Hombre (Lado Izquierdo) */}
+  <img
+    src="/images/Male-Dress-Code.jpg"
+    alt="Dress Code Masculino"
+    style={{ width: "50%", height: "auto", objectFit: "cover" }}
+    loading="lazy"
+  />
 
-            {/* Imagen completa debajo */}
-            <div style={{ borderRadius: 10, overflow: "hidden",
-              border: `1px solid ${C.border}` }}>
-              <img
-                src="/images/Male-Dress-Code.jpg"
-                alt="Dress Code Hugo Fest"
-                style={{ width: "50%", height: "auto", display: "block" }}
-                loading="lazy"
-                 src="/images/Female-Dress-Code.jpg"
-                alt="Dress Code Hugo Fest"
-                style={{ width: "50%", height: "auto", display: "block" }}
-                loading="lazy"
-              />
-            </div>
-          </div>
+  {/* 2. Imagen de la Mujer - Vestido Rojo (Lado Derecho) */}
+  <img
+    src="/images/Female-Dress-Code.jpg"
+    alt="Dress Code Femenino"
+    style={{ width: "50%", height: "auto", objectFit: "cover" }}
+    loading="lazy"
+  />
+
+</div>
 
           {/* ── DINÁMICA ─────────────────────────────────────────────────── */}
           <div className="fade-up d5" style={{
