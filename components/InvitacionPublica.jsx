@@ -464,29 +464,30 @@ export default function InvitacionPublica({ guestId }) {
             </div>
 
 
-            {/* Contenedor de imágenes alineadas */}
-          <div style={{ 
-            borderRadius: 10, 
-            overflow: "hidden",
-            border: `1px solid ${C.border}`,
-            display: "flex" // Activa el alineamiento horizontal
-          }}>
-            {/* Foto del Hombre (Izquierda) */}
-            <img
-              src="/images/Male-Dress-Code.jpg"
-              alt="Dress Code Masculino"
-              style={{ width: "50%", height: "auto", display: "block", objectFit: "cover" }}
-              loading="lazy"
-            />
-            {/* Foto de la Mujer - Vestido Rojo (Derecha) */}
-            <img
-              src="/images/Female-Dress-Code.jpg"
-              alt="Dress Code Femenino"
-              style={{ width: "50%", height: "auto", display: "block", objectFit: "cover" }}
-              loading="lazy"
-            />
-          </div>
-        </div> {/* Este cierre corresponde al contenedor de los textos superiores */}
+             {/* Contenedor de fotos - Estructura corregida */}
+        <div style={{ 
+              borderRadius: 10, 
+              overflow: "hidden",
+              border: `1px solid ${C.border}`,
+              display: "flex",     // Esto pone las fotos una al lado de la otra
+              width: "100%" 
+         }}>
+               {/* Foto 1: Hombre (Izquierda) */}
+  <img
+    src="/images/Male-Dress-Code.jpg"
+    alt="Dress Code Masculino"
+    style={{ width: "50%", height: "auto", display: "block", objectFit: "cover" }}
+    loading="lazy"
+  />
+
+  {/* Foto 2: Mujer - Vestido Rojo (Derecha) */}
+  <img
+    src="/images/Female-Dress-Code.jpg"
+    alt="Dress Code Femenino"
+    style={{ width: "50%", height: "auto", display: "block", objectFit: "cover" }}
+    loading="lazy"
+  />
+</div>
 
           {/* ── DINÁMICA ─────────────────────────────────────────────────── */}
           <div className="fade-up d5" style={{
