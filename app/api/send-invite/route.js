@@ -1,12 +1,12 @@
 // app/api/send-invite/route.js
-// POST /api/send-invite — Envía invitaciones por Email (Resend) y/o WhatsApp (Twilio)
+// POST /api/send-invite — Envía invitaciones por Email (Gmail SMTP) y/o WhatsApp (UltraMsg)
 
 import { NextResponse } from "next/server";
+import nodemailer        from "nodemailer";
 
-// 🔴 Cambia esta URL tras publicar en Vercel
 const BASE_URL = process.env.NEXT_PUBLIC_VERCEL_URL
   ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-  : "https://TU-PROYECTO.vercel.app";
+  : "https://hugo-fest.vercel.app";
 
 // ── HTML del email ────────────────────────────────────────────────────────────
 function buildEmailHTML({ name, table, guestId }) {
@@ -165,53 +165,42 @@ _Noche de Casino · Las Vegas Night 🃏_
 _Esta invitación es personal e intransferible._`;
 }
 
-// ── Enviar Email (Resend) ─────────────────────────────────────────────────────
+// ── Transporter Gmail SMTP ────────────────────────────────────────────────────
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
+
+// ── Enviar Email (Gmail SMTP) ─────────────────────────────────────────────────
 async function sendEmail({ name, email, table, guestId }) {
-  const res = await fetch("https://api.resend.com/emails", {
+  await transporter.sendMail({
+    from:    `"Hugo Fest 🎰" <${process.env.GMAIL_USER}>`,
+    to:      email,
+    subject: `🎰 Tu invitación — Hugo Fest · Hugo Monroy's Birthday`,
+    html:    buildEmailHTML({ name, table, guestId }),
+  });
+}
+
+// ── Enviar WhatsApp (UltraMsg) ────────────────────────────────────────────────
+async function sendWhatsApp({ name, phone, table, guestId }) {
+  const instanceId = process.env.ULTRAMSG_INSTANCE_ID;
+  const token      = process.env.ULTRAMSG_TOKEN;
+
+  const res = await fetch(`https://api.ultramsg.com/${instanceId}/messages/chat`, {
     method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      from:    process.env.RESEND_FROM_EMAIL || "invitaciones@resend.dev",
-      to:      [email],
-      subject: `🎰 Tu invitación — Hugo Fest · Hugo Monroy's Birthday`,
-      html:    buildEmailHTML({ name, table, guestId }),
+      token,
+      to:   phone,
+      body: buildWhatsAppMessage({ name, table, guestId }),
     }),
   });
   if (!res.ok) {
     const err = await res.json();
-    throw new Error(`Resend: ${err.message || res.status}`);
-  }
-  return res.json();
-}
-
-// ── Enviar WhatsApp (Twilio) ──────────────────────────────────────────────────
-async function sendWhatsApp({ name, phone, table, guestId }) {
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken  = process.env.TWILIO_AUTH_TOKEN;
-  const fromNumber = process.env.TWILIO_WHATSAPP_NUMBER || "whatsapp:+14155238886";
-  const toNumber   = phone.startsWith("whatsapp:") ? phone : `whatsapp:${phone}`;
-
-  const res = await fetch(
-    `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-    {
-      method: "POST",
-      headers: {
-        "Authorization": `Basic ${Buffer.from(`${accountSid}:${authToken}`).toString("base64")}`,
-        "Content-Type":  "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        From: fromNumber,
-        To:   toNumber,
-        Body: buildWhatsAppMessage({ name, table, guestId }),
-      }),
-    }
-  );
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(`Twilio: ${err.message || res.status}`);
+    throw new Error(`UltraMsg: ${err.error || res.status}`);
   }
   return res.json();
 }
